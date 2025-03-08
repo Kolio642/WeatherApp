@@ -1,21 +1,27 @@
 const path = require('path');
+const TerserPlugin = require('terser-webpack-plugin');
 
 module.exports = {
-  target: 'webworker',
-  entry: './src/index.js',
-  mode: 'development',
+  entry: './src/worker.js',
   output: {
     filename: 'worker.js',
     path: path.join(__dirname, 'dist'),
   },
+  target: 'webworker',
+  mode: process.env.NODE_ENV || 'production',
   optimization: {
-    minimize: false
+    minimize: true,
+    minimizer: [new TerserPlugin()],
   },
-  performance: {
-    hints: false,
-  },
-  devtool: 'cheap-module-source-map',
-  resolve: {
-    extensions: ['.js', '.json'],
+  module: {
+    rules: [
+      {
+        test: /\.js$/,
+        loader: 'babel-loader',
+        options: {
+          presets: ['@babel/preset-env'],
+        },
+      },
+    ],
   },
 }; 
