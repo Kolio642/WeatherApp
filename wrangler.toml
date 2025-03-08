@@ -11,6 +11,10 @@ bucket = "./dist"
 command = "npm run build"
 watch_dir = "src"
 
+[assets]
+directory = "./dist"
+binding = "ASSETS"
+
 [env.production]
 name = "weather-website-prod"
 
