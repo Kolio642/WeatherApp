@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node server.js",
     "dev": "nodemon server.js",
-    "build": "npm install && mkdir -p dist && cp -r *.js *.html *.css .env.example dist/",
+    "build": "node build.js",
     "deploy": "npm run build"
   },
   "keywords": [
