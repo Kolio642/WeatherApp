@@ -7,4 +7,4 @@ echo The site will be available at: http://localhost:4000
 echo.
 echo Press Ctrl+C to stop the server
 echo.
-node local-server.js 
+node scripts/server/local-server.js 

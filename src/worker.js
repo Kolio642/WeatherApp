@@ -1,5 +1,8 @@
 import { handleApiRequest } from './handlers/api';
 import { getAssetFromKV } from '@cloudflare/kv-asset-handler';
+import { getEnv } from './config/env';
+import { HTTP_STATUS, CORS_HEADERS } from './constants/api';
+import { addCorsHeaders } from './middleware/cors';
 
 async function handleRequest(event) {
   const url = new URL(event.request.url);
@@ -13,18 +16,37 @@ async function handleRequest(event) {
       env_available: event.env !== undefined,
       env_properties: event.env ? Object.keys(event.env) : [],
       manifest_available: typeof __STATIC_CONTENT_MANIFEST !== 'undefined',
-      assets_binding_available: event.env && event.env.ASSETS !== undefined
+      assets_binding_available: event.env && event.env.ASSETS !== undefined,
+      api_key_available: !!getEnv(event, 'WEATHER_API_KEY')
     };
     
-    return new Response(JSON.stringify(debugInfo, null, 2), {
-      status: 200,
+    return addCorsHeaders(new Response(JSON.stringify(debugInfo, null, 2), {
+      status: HTTP_STATUS.OK,
       headers: { 'Content-Type': 'application/json' }
-    });
+    }));
   }
   
   // Handle API requests
   if (url.pathname.startsWith('/api')) {
-    return handleApiRequest(event.request, event.env);
+    // Get API key from environment
+    const apiKey = getEnv(event, 'WEATHER_API_KEY');
+    if (!apiKey) {
+      return addCorsHeaders(new Response(JSON.stringify({ error: 'API key not configured' }), {
+        status: HTTP_STATUS.INTERNAL_SERVER_ERROR,
+        headers: { 'Content-Type': 'application/json' }
+      }));
+    }
+    
+    try {
+      // Pass the entire event.request object to handleApiRequest
+      return await handleApiRequest(event.request, apiKey);
+    } catch (error) {
+      console.error('API request error:', error);
+      return addCorsHeaders(new Response(JSON.stringify({ error: 'Internal server error', details: error.message }), {
+        status: HTTP_STATUS.INTERNAL_SERVER_ERROR,
+        headers: { 'Content-Type': 'application/json' }
+      }));
+    }
   }
 
   // Normalize the path - ensure / serves index.html

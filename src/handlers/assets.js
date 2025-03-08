@@ -1,3 +1,5 @@
+import { HTTP_STATUS } from '../constants/api';
+
 /**
  * Static asset handler for Cloudflare Workers Sites
  * @param {FetchEvent} event - The fetch event
@@ -22,7 +24,7 @@ export async function serveStaticAsset(event) {
         const indexAsset = await event.env.KV_ASSETS.get(path.slice(1) + 'index.html');
         if (indexAsset) {
           return new Response(indexAsset.body, {
-            status: 200,
+            status: HTTP_STATUS.OK,
             headers: {
               'Content-Type': indexAsset.contentType || 'text/html;charset=UTF-8',
               'Cache-Control': 'public, max-age=3600'
@@ -32,7 +34,7 @@ export async function serveStaticAsset(event) {
       }
       
       return new Response(`Not Found: ${path}`, { 
-        status: 404,
+        status: HTTP_STATUS.NOT_FOUND,
         headers: { 'Content-Type': 'text/plain' }
       });
     }
@@ -42,7 +44,7 @@ export async function serveStaticAsset(event) {
     
     // Return the asset with appropriate headers
     return new Response(asset.body, {
-      status: 200,
+      status: HTTP_STATUS.OK,
       headers: {
         'Content-Type': contentType,
         'Cache-Control': 'public, max-age=3600'
@@ -50,7 +52,7 @@ export async function serveStaticAsset(event) {
     });
   } catch (e) {
     return new Response(`Error serving ${path}: ${e.message}`, { 
-      status: 500,
+      status: HTTP_STATUS.INTERNAL_SERVER_ERROR,
       headers: { 'Content-Type': 'text/plain' }
     });
   }
