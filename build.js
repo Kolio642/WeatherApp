@@ -23,19 +23,78 @@ filesToClean.forEach(file => {
   }
 });
 
-// Copy public files to dist if public dir exists
+// Check for and copy public files
 console.log('Copying static files...');
 if (fs.existsSync(PUBLIC_DIR)) {
   console.log('Copying from public directory...');
-  copyDirectory(PUBLIC_DIR, DIST_DIR);
+  
+  // Check if public dir has files
+  const publicFiles = fs.readdirSync(PUBLIC_DIR);
+  console.log(`Found ${publicFiles.length} files in public directory`);
+  
+  if (publicFiles.length === 0) {
+    console.warn('Warning: Public directory exists but is empty!');
+  }
+  
+  // Copy each file individually for better logging
+  publicFiles.forEach(file => {
+    const sourcePath = path.join(PUBLIC_DIR, file);
+    const targetPath = path.join(DIST_DIR, file);
+    
+    if (fs.statSync(sourcePath).isFile()) {
+      console.log(`Copying ${file} to dist...`);
+      fs.copyFileSync(sourcePath, targetPath);
+    } else {
+      // It's a directory, handle recursively
+      console.log(`Copying directory ${file} to dist...`);
+      copyDirectory(sourcePath, targetPath);
+    }
+  });
+} else {
+  console.warn('Warning: Public directory does not exist!');
 }
 
-// Also copy any essential files from root that might be needed
+// Force copy essential files
+const essentialFiles = ['index.html', 'styles.css', 'scripts.js'];
+console.log('Checking for essential static files...');
+
+// First look in the public directory
+essentialFiles.forEach(file => {
+  const publicPath = path.join(PUBLIC_DIR, file);
+  const distPath = path.join(DIST_DIR, file);
+  
+  if (fs.existsSync(publicPath) && !fs.existsSync(distPath)) {
+    console.log(`Copying essential file ${file} from public to dist...`);
+    fs.copyFileSync(publicPath, distPath);
+  }
+});
+
+// Also check in root
 console.log('Checking for additional static files in root...');
-['styles.css', 'scripts.js', 'index.html'].forEach(file => {
-  if (fs.existsSync(file) && !fs.existsSync(path.join(DIST_DIR, file))) {
+essentialFiles.forEach(file => {
+  const rootPath = file;
+  const distPath = path.join(DIST_DIR, file);
+  
+  if (fs.existsSync(rootPath) && !fs.existsSync(distPath)) {
     console.log(`Copying ${file} from root to dist...`);
-    fs.copyFileSync(file, path.join(DIST_DIR, file));
+    fs.copyFileSync(rootPath, distPath);
+  }
+});
+
+// Verify essential files
+console.log('Verifying essential files were copied...');
+essentialFiles.forEach(file => {
+  const distPath = path.join(DIST_DIR, file);
+  if (!fs.existsSync(distPath)) {
+    console.warn(`WARNING: Essential file ${file} is missing from dist!`);
+    // If file is available in public, force copy it
+    const publicPath = path.join(PUBLIC_DIR, file);
+    if (fs.existsSync(publicPath)) {
+      console.log(`Force copying ${file} from public to dist...`);
+      fs.copyFileSync(publicPath, distPath);
+    }
+  } else {
+    console.log(`✓ Essential file ${file} is present in dist`);
   }
 });
 
@@ -64,6 +123,10 @@ function copyDirectory(sourceDir, targetDir) {
     return;
   }
 
+  if (!fs.existsSync(targetDir)) {
+    fs.mkdirSync(targetDir, { recursive: true });
+  }
+
   const files = fs.readdirSync(sourceDir);
   files.forEach(file => {
     const sourcePath = path.join(sourceDir, file);
@@ -86,13 +149,28 @@ listDirectory(DIST_DIR);
 
 // Helper function to list directory contents
 function listDirectory(dir, indent = '') {
+  if (!fs.existsSync(dir)) {
+    console.log(`${indent}Directory ${dir} does not exist!`);
+    return;
+  }
+  
   const files = fs.readdirSync(dir);
+  
+  if (files.length === 0) {
+    console.log(`${indent}(empty directory)`);
+    return;
+  }
+  
   files.forEach(file => {
     const filePath = path.join(dir, file);
-    console.log(`${indent}- ${file}`);
+    const stats = fs.statSync(filePath);
+    const fileSize = (stats.size / 1024).toFixed(2) + 'KB';
     
-    if (fs.statSync(filePath).isDirectory()) {
+    if (stats.isDirectory()) {
+      console.log(`${indent}- ${file}/ (directory)`);
       listDirectory(filePath, `${indent}  `);
+    } else {
+      console.log(`${indent}- ${file} (${fileSize})`);
     }
   });
 } 

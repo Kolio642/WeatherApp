@@ -4,16 +4,15 @@ type = "javascript"
 compatibility_date = "2024-03-08"
 compatibility_flags = ["nodejs_compat"]
 
-[site]
-bucket = "./dist"
+# Remove the site configuration and use only assets
+[assets]
+directory = "./dist"
+binding = "ASSETS"
+not_found_handling = "single-page-application"
 
 [build]
 command = "npm run build"
 watch_dir = "src"
-
-[assets]
-directory = "./dist"
-binding = "ASSETS"
 
 [env.production]
 name = "weather-website-prod"
@@ -23,6 +22,6 @@ PORT = "8787"
 WEATHER_API_KEY = "7e123ef793714185994205801250703"
 
 [[kv_namespaces]]
-binding = "ASSETS"
+binding = "KV_ASSETS"
 id = "9c5bd0962b7e44d1aa1be3fbf79aa793"
 preview_id = "01b9d15f481e46d298a14197c471abd1" 

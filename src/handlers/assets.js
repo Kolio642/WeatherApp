@@ -13,13 +13,13 @@ export async function serveStaticAsset(event) {
   }
 
   try {
-    // Get the asset from __STATIC_CONTENT
-    const asset = await __STATIC_CONTENT.get(path.slice(1));
+    // Get the asset from KV namespace
+    const asset = await event.env.KV_ASSETS.get(path.slice(1));
     
     if (!asset) {
       // If the exact path is not found, try with index.html
       if (path.endsWith('/')) {
-        const indexAsset = await __STATIC_CONTENT.get(path.slice(1) + 'index.html');
+        const indexAsset = await event.env.KV_ASSETS.get(path.slice(1) + 'index.html');
         if (indexAsset) {
           return new Response(indexAsset.body, {
             status: 200,
