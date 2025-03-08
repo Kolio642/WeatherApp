@@ -4,11 +4,11 @@ import { serveStaticAsset } from './handlers/assets';
 
 // Define event listener
 addEventListener('fetch', event => {
-  event.respondWith(handleEvent(event));
+  event.respondWith(handleRequest(event));
 });
 
 // Handle requests
-async function handleEvent(event) {
+async function handleRequest(event) {
   const url = new URL(event.request.url);
   const path = url.pathname;
   
