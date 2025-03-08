@@ -28,43 +28,65 @@ The application provides a clean, intuitive interface for checking weather condi
 - Dark mode for evening use
 - Mobile-responsive layout
 
-## Setup and Installation
+## Project Structure
+
+This project follows a standard modern structure for Cloudflare Workers:
+
+```
+/
+├── src/                  # Source code
+│   ├── index.js          # Main entry point
+│   ├── handlers/         # Request handlers
+│   │   ├── api.js        # API route handlers
+│   │   └── assets.js     # Static asset handlers
+│   └── utils/            # Utility functions
+│       └── fetch.js      # Fetch utilities
+├── public/               # Static assets
+│   ├── index.html        # Main HTML file
+│   ├── styles.css        # CSS styles
+│   └── scripts.js        # Frontend JavaScript
+├── dist/                 # Build output (generated)
+├── build.js              # Build script
+├── webpack.config.js     # Webpack configuration
+├── wrangler.toml         # Cloudflare Workers configuration
+└── package.json          # Project dependencies
+```
+
+## Development
 
 ### Prerequisites
-- [Node.js](https://nodejs.org/) (v14 or higher)
-- npm (included with Node.js)
-- A free API key from [WeatherAPI.com](https://www.weatherapi.com/my/)
 
-### Installation Steps
+- Node.js (v14 or higher)
+- npm (v6 or higher)
 
-1. Clone this repository:
-   ```
-   git clone <repository-url>
-   cd weather-website
-   ```
+### Setup
 
-2. Install dependencies:
-   ```
-   npm install
-   ```
+1. Clone the repository
+2. Install dependencies
 
-3. Create a `.env` file in the root directory (copy from `.env.example`):
-   ```
-   cp .env.example .env
-   ```
+```bash
+npm install
+```
 
-4. Replace the API key in the `.env` file with your own WeatherAPI.com key
+3. Create a `.env` file based on `.env.example`
 
-5. Start the development server:
-   ```
-   npm run dev
-   ```
-   or run `.\start.bat` on Windows
+### Development Commands
 
-6. Open your browser and navigate to:
-   ```
-   http://localhost:4000
-   ```
+- Start local server: `npm start`
+- Run with hot reload: `npm run dev`
+- Build for production: `npm run build`
+- Preview with Wrangler: `npm run preview`
+- Deploy to Cloudflare: `npm run deploy`
+
+## Deployment
+
+This project uses Cloudflare Workers for deployment. The `wrangler.toml` file configures the deployment settings.
+
+To deploy:
+
+```bash
+npm run deploy
+```
 
 ## How to Get a WeatherAPI.com API Key
 

@@ -1,9 +1,9 @@
 name = "weather-website"
-main = "_worker.js"
+main = "src/index.js"
 compatibility_date = "2023-06-12"
 
 [site]
-bucket = "./dist"
+bucket = "./public"
 
 [build]
 command = "npm run build"
