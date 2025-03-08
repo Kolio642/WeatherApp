@@ -1,5 +1,5 @@
 name = "weather-website"
-type = "webpack"
+type = "javascript"
 account_id = "" # You'll add this later from your Cloudflare dashboard
 workers_dev = true
 route = ""
@@ -8,7 +8,11 @@ compatibility_date = "2023-06-12"
 
 [site]
 bucket = "./dist"
-entry-point = "."
+entry-point = "workers-site"
+
+[build]
+command = "npm run build"
+upload.format = "service-worker"
 
 [env.production]
 name = "weather-website-prod"

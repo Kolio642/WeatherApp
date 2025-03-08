@@ -1,0 +1,12 @@
+{
+  "private": true,
+  "name": "weather-website-worker",
+  "version": "1.0.0",
+  "description": "Cloudflare worker for Weather Website",
+  "main": "index.js",
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@cloudflare/kv-asset-handler": "^0.3.0"
+  }
+} 

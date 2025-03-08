@@ -24,8 +24,49 @@ const autocompleteContainer = document.createElement('div');
 autocompleteContainer.className = 'autocomplete-container';
 document.querySelector('.search-container').appendChild(autocompleteContainer);
 
-// API configuration
-const API_BASE_URL = window.location.origin;  // Use relative URL for backend API
+// API configuration - works both locally and when deployed
+const API_BASE_URL = window.location.origin;
+
+// Fallback for local testing without proper backend
+function isLocalhost() {
+    return window.location.hostname === 'localhost' || 
+           window.location.hostname === '127.0.0.1' ||
+           window.location.hostname.startsWith('192.168.') ||
+           window.location.hostname === '';
+}
+
+// Add a function to check if the API is available
+async function checkApiAvailability() {
+    try {
+        // Try to fetch a city to see if API is working
+        const testResponse = await fetch(`${API_BASE_URL}/api/cities?q=London`);
+        if (!testResponse.ok) {
+            throw new Error('API test failed');
+        }
+        
+        // API is available, do nothing
+        return true;
+    } catch (error) {
+        console.warn('API availability check failed:', error);
+        
+        // Show banner for Cloudflare deployment
+        const banner = document.createElement('div');
+        banner.className = 'api-warning-banner';
+        banner.innerHTML = `
+            <p><strong>Notice:</strong> The API endpoints need to be configured for this deployment.</p>
+            <p>Please set up the WEATHER_API_KEY environment variable in your Cloudflare dashboard.</p>
+            <button id="dismiss-banner">Dismiss</button>
+        `;
+        document.body.prepend(banner);
+        
+        // Add dismiss functionality
+        document.getElementById('dismiss-banner').addEventListener('click', () => {
+            banner.remove();
+        });
+        
+        return false;
+    }
+}
 
 // Variables
 let currentTempCelsius = 0;
@@ -529,8 +570,8 @@ function showErrorWithFallback(errorMessage) {
     });
 }
 
-// Make sure loading is hidden when the page first loads
-document.addEventListener('DOMContentLoaded', () => {
+// Call the check when the page loads
+document.addEventListener('DOMContentLoaded', async () => {
     // Hide loading initially
     loadingElement.style.display = 'none';
     loadingElement.classList.add('hidden');
@@ -542,10 +583,15 @@ document.addEventListener('DOMContentLoaded', () => {
         themeToggleBtn.textContent = savedTheme === 'dark' ? '☀️' : '🌙';
     }
     
-    // Load last searched city
-    const lastCity = localStorage.getItem('lastCity');
-    if (lastCity) {
-        cityInput.value = lastCity;
-        getWeatherData(lastCity);
+    // Check API availability before loading data
+    const apiAvailable = await checkApiAvailability();
+    
+    // Load last searched city if API is available
+    if (apiAvailable) {
+        const lastCity = localStorage.getItem('lastCity');
+        if (lastCity) {
+            cityInput.value = lastCity;
+            getWeatherData(lastCity);
+        }
     }
 }); 
