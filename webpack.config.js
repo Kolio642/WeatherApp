@@ -3,9 +3,9 @@ const path = require('path');
 module.exports = {
   target: 'webworker',
   entry: './src/index.js',
-  mode: process.env.NODE_ENV || 'production',
+  mode: 'development',
   output: {
-    filename: '_worker.js',
+    filename: 'worker.js',
     path: path.join(__dirname, 'dist'),
   },
   optimization: {
@@ -14,6 +14,7 @@ module.exports = {
   performance: {
     hints: false,
   },
+  devtool: 'cheap-module-source-map',
   resolve: {
     extensions: ['.js', '.json'],
   },

@@ -2,13 +2,15 @@
 import { handleApiRequest } from './handlers/api';
 import { serveStaticAsset } from './handlers/assets';
 
-// Get API key from environment
-const WEATHER_API_KEY = typeof WEATHER_API_KEY !== 'undefined' ? WEATHER_API_KEY : '';
-
+// Define event listener
 addEventListener('fetch', event => {
   event.respondWith(handleEvent(event));
 });
 
+// Get API key from environment variables - note the proper way to access environment variables
+const WEATHER_API_KEY = typeof WEATHER_API_KEY !== 'undefined' ? WEATHER_API_KEY : '';
+
+// Handle requests
 async function handleEvent(event) {
   const url = new URL(event.request.url);
   const path = url.pathname;

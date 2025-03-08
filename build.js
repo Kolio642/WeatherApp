@@ -13,9 +13,21 @@ if (!fs.existsSync(DIST_DIR)) {
   fs.mkdirSync(DIST_DIR, { recursive: true });
 }
 
-// Copy public files to dist
-console.log('Copying static files from public directory...');
-copyDirectory(PUBLIC_DIR, DIST_DIR);
+// Copy public files to dist if public dir exists
+console.log('Copying static files...');
+if (fs.existsSync(PUBLIC_DIR)) {
+  console.log('Copying from public directory...');
+  copyDirectory(PUBLIC_DIR, DIST_DIR);
+}
+
+// Also copy any essential files from root that might be needed
+console.log('Checking for additional static files in root...');
+['styles.css', 'scripts.js', 'index.html'].forEach(file => {
+  if (fs.existsSync(file) && !fs.existsSync(path.join(DIST_DIR, file))) {
+    console.log(`Copying ${file} from root to dist...`);
+    fs.copyFileSync(file, path.join(DIST_DIR, file));
+  }
+});
 
 // Bundle worker code with webpack
 console.log('Bundling worker code with webpack...');

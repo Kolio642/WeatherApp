@@ -1,9 +1,11 @@
 name = "weather-website"
-main = "src/index.js"
+main = "dist/worker.js"
+type = "javascript"
 compatibility_date = "2023-06-12"
+compatibility_flags = ["nodejs_compat"]
 
 [site]
-bucket = "./public"
+bucket = "./dist"
 
 [build]
 command = "npm run build"
@@ -12,4 +14,5 @@ command = "npm run build"
 name = "weather-website-prod"
 
 [vars]
-PORT = "8787" 
+PORT = "8787"
+WEATHER_API_KEY = "7e123ef793714185994205801250703" 
