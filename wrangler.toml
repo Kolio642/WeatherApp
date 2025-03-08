@@ -1,7 +1,7 @@
 name = "weather-website"
 main = "dist/worker.js"
 type = "javascript"
-compatibility_date = "2023-06-12"
+compatibility_date = "2023-10-30"
 compatibility_flags = ["nodejs_compat"]
 
 [site]

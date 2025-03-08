@@ -7,18 +7,19 @@ addEventListener('fetch', event => {
   event.respondWith(handleEvent(event));
 });
 
-// Get API key from environment variables - note the proper way to access environment variables
-const WEATHER_API_KEY = typeof WEATHER_API_KEY !== 'undefined' ? WEATHER_API_KEY : '';
-
 // Handle requests
 async function handleEvent(event) {
   const url = new URL(event.request.url);
   const path = url.pathname;
   
+  // Get API key from environment variables
+  // This is the correct way to access environment variables in Cloudflare Workers
+  const apiKey = event.env && event.env.WEATHER_API_KEY ? event.env.WEATHER_API_KEY : '';
+  
   try {
     // Handle API requests
     if (path.startsWith('/api/')) {
-      return await handleApiRequest(event, WEATHER_API_KEY);
+      return await handleApiRequest(event, apiKey);
     }
 
     // Serve static files

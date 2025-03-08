@@ -13,6 +13,16 @@ if (!fs.existsSync(DIST_DIR)) {
   fs.mkdirSync(DIST_DIR, { recursive: true });
 }
 
+// Clean up previous builds - remove worker.js and worker.js.map
+const filesToClean = ['worker.js', 'worker.js.map'];
+filesToClean.forEach(file => {
+  const filePath = path.join(DIST_DIR, file);
+  if (fs.existsSync(filePath)) {
+    console.log(`Removing previous build file: ${file}`);
+    fs.unlinkSync(filePath);
+  }
+});
+
 // Copy public files to dist if public dir exists
 console.log('Copying static files...');
 if (fs.existsSync(PUBLIC_DIR)) {
