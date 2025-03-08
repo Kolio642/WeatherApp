@@ -1,18 +1,12 @@
 name = "weather-website"
-type = "javascript"
-account_id = "" # You'll add this later from your Cloudflare dashboard
-workers_dev = true
-route = ""
-zone_id = ""
+main = "_worker.js"
 compatibility_date = "2023-06-12"
 
 [site]
 bucket = "./dist"
-entry-point = "workers-site"
 
 [build]
 command = "npm run build"
-upload.format = "service-worker"
 
 [env.production]
 name = "weather-website-prod"

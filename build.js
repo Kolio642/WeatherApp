@@ -14,29 +14,20 @@ fs.copyFileSync('styles.css', 'dist/styles.css');
 fs.copyFileSync('scripts.js', 'dist/scripts.js');
 fs.copyFileSync('_worker.js', 'dist/_worker.js');
 
-// Create workers-site directory
-console.log('Copying worker files...');
-if (!fs.existsSync('dist/workers-site')) {
-  fs.mkdirSync('dist/workers-site', { recursive: true });
-}
-
-// Copy worker files if they exist
-try {
-  if (fs.existsSync('workers-site/index.js')) {
-    fs.copyFileSync('workers-site/index.js', 'dist/workers-site/index.js');
-  }
-  if (fs.existsSync('workers-site/package.json')) {
-    fs.copyFileSync('workers-site/package.json', 'dist/workers-site/package.json');
-  }
-} catch (err) {
-  console.error('Error copying workers-site files:', err);
-}
-
 // Copy environment configuration
 console.log('Setting up environment...');
-if (fs.existsSync('.env.example')) {
+if (fs.existsSync('.env')) {
+  fs.copyFileSync('.env', 'dist/.env');
+} else if (fs.existsSync('.env.example')) {
   fs.copyFileSync('.env.example', 'dist/.env');
 }
+
+// Write README for Cloudflare
+fs.writeFileSync('dist/README.md', 
+  '# Weather Website\n\n' +
+  'This is a weather website deployed on Cloudflare Pages.\n' +
+  'Built at: ' + new Date().toISOString() + '\n'
+);
 
 console.log('Build completed successfully!');
 console.log('Files in dist directory:');
