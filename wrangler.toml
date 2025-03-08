@@ -1,0 +1,17 @@
+name = "weather-website"
+type = "webpack"
+account_id = "" # You'll add this later from your Cloudflare dashboard
+workers_dev = true
+route = ""
+zone_id = ""
+compatibility_date = "2023-06-12"
+
+[site]
+bucket = "./dist"
+entry-point = "."
+
+[env.production]
+name = "weather-website-prod"
+
+[vars]
+PORT = "8787" 
