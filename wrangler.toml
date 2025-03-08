@@ -6,14 +6,19 @@ compatibility_flags = ["nodejs_compat"]
 
 [site]
 bucket = "./dist"
-include = ["index.html", "styles.css", "scripts.js"]
 
 [build]
 command = "npm run build"
+watch_dir = "src"
 
 [env.production]
 name = "weather-website-prod"
 
 [vars]
 PORT = "8787"
-WEATHER_API_KEY = "7e123ef793714185994205801250703" 
+WEATHER_API_KEY = "7e123ef793714185994205801250703"
+
+[[kv_namespaces]]
+binding = "ASSETS"
+id = "9c5bd0962b7e44d1aa1be3fbf79aa793"
+preview_id = "01b9d15f481e46d298a14197c471abd1" 

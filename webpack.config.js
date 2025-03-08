@@ -17,11 +17,28 @@ module.exports = {
     rules: [
       {
         test: /\.js$/,
-        loader: 'babel-loader',
-        options: {
-          presets: ['@babel/preset-env'],
+        exclude: /node_modules/,
+        use: {
+          loader: 'babel-loader',
+          options: {
+            presets: [
+              ['@babel/preset-env', {
+                targets: {
+                  browsers: ['last 2 versions'],
+                },
+                modules: false,
+              }],
+            ],
+          },
         },
       },
     ],
   },
+  resolve: {
+    extensions: ['.js', '.mjs', '.json', '.wasm'],
+    fallback: {
+      "path": false,
+      "fs": false
+    }
+  }
 }; 
